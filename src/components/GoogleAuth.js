@@ -1,8 +1,9 @@
 import React from 'react';
+import {connect} from 'react-redux'
+import {signIn,signOut} from '../actions';
 
 class GoogleAuth extends React.Component
 {
-    state = { isSignedIn:null};
     componentDidMount()
     {   
         window.gapi.load('client:auth2', () => {
@@ -11,7 +12,7 @@ class GoogleAuth extends React.Component
                 scope:'email'
             }).then(() => {
                 this.auth = window.gapi.auth2.getAuthInstance();
-                this.setState({isSignedIn:this.auth.isSignedIn.get()});
+                this.checkAuth()
                 this.auth.isSignedIn.listen(this.checkAuth);
             });
         });
@@ -19,25 +20,57 @@ class GoogleAuth extends React.Component
 
     checkAuth = () =>
     {
-        this.setState({isSignedIn:this.auth.isSignedIn.get()});
+        if(this.auth.isSignedIn.get())
+        {
+            this.props.signIn();
+        }
+        else 
+        {
+            this.props.signOut();
+        }
     }
 
-    onSignIn = () =>
+    onSignInClick = () =>
     {       
-        this.auth.signIn();
+        try
+        {
+            this.auth.signIn().then((response)=>{
+                this.props.signIn();
+            },function(error)
+            {    
+                if(error.error === 'popup_closed_by_user'){
+                    alert('Oh Dude, Why you close authentication user window...!');
+                }
+                else if(error.error === 'access_denied')
+                {
+                    alert("Your acess denied by user");
+                }
+                else
+                {
+                    alert("failed to signin")
+                }
+            });  
+        }
+        catch(e)
+        {
+            console.log("catched some expressions");
+        }
+        
+
     }
 
-    signOut = () =>
+    signOutClick = () =>
     {
         this.auth.signOut();
+        this.props.signOut();
     }
     myrender()
     {
-        const val = this.state.isSignedIn;
+        const val = this.props.sign_in;
         if(val)
         {
             return (
-                <button onClick={this.signOut} className="ui button">
+                <button onClick={this.signOutClick} className="ui button">
                     SignOut
                 </button>
             );
@@ -49,7 +82,7 @@ class GoogleAuth extends React.Component
         else
         {
             return (
-                <button className="ui button" onClick={this.onSignIn}>
+                <button className="ui button" onClick={this.onSignInClick}>
                     SignIn
                 </button>
             )
@@ -61,6 +94,11 @@ class GoogleAuth extends React.Component
                 <div>{this.myrender()}</div>
             );
     }
-}
 
-export default GoogleAuth;
+    
+}
+const mapStateToProps = (state) =>
+{
+    return {sign_in:state.AuthReducers.signIn};
+}
+export default connect(mapStateToProps,{signIn,signOut})(GoogleAuth);
