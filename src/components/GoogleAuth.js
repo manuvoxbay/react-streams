@@ -22,33 +22,25 @@ class GoogleAuth extends React.Component
     {
         if(this.auth.isSignedIn.get())
         {
+            if(this.props.sign_in === null || this.props.sign_in === false)
             this.props.signIn();
         }
         else 
         {
+            if(this.props.sign_in === null || this.props.sign_in)
             this.props.signOut();
         }
     }
 
     onSignInClick = () =>
-    {       
+    {   
         try
         {
-            this.auth.signIn().then((response)=>{
-                this.props.signIn();
-            },function(error)
+            this.auth.signIn().then((response)=>{ // google signin
+                this.props.signIn(); //calling action
+            },(error) =>
             {    
-                if(error.error === 'popup_closed_by_user'){
-                    alert('Oh Dude, Why you close authentication user window...!');
-                }
-                else if(error.error === 'access_denied')
-                {
-                    alert("Your acess denied by user");
-                }
-                else
-                {
-                    alert("failed to signin")
-                }
+                alert("failed to signin");
             });  
         }
         catch(e)
@@ -61,7 +53,7 @@ class GoogleAuth extends React.Component
 
     signOutClick = () =>
     {
-        this.auth.signOut();
+        this.auth.signOut(); //google sign out not any redux action
         this.props.signOut();
     }
     myrender()
