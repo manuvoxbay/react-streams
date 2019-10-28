@@ -8,15 +8,16 @@ class Header extends React.Component
     render()
     {
         return (
-                <div>
-                       <div align="left">
-                           <Link to="/">Streamer</Link>
-                       </div>
-                       <div align="right">
-                       <GoogleAuth/>
-                           <Link to="/">Streamer</Link> &nbsp;&nbsp;
-                       </div>
+            <div>
+                <div align="left">
+                    <Link to="/">Streamer</Link> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <Link to="/stream/create">Create Stream</Link>
                 </div>
+                <div align="right">
+                    <GoogleAuth/>
+                    <Link to="/">Streamer</Link> &nbsp;&nbsp;
+                </div>
+            </div>
             );
     }
 }

@@ -22,8 +22,9 @@ class GoogleAuth extends React.Component
     {
         if(this.auth.isSignedIn.get())
         {
+            const user_id = this.auth.currentUser.get().getId();    
             if(this.props.sign_in === null || this.props.sign_in === false)
-            this.props.signIn();
+            this.props.signIn(user_id);
         }
         else 
         {
@@ -37,7 +38,8 @@ class GoogleAuth extends React.Component
         try
         {
             this.auth.signIn().then((response)=>{ // google signin
-                this.props.signIn(); //calling action
+                const user_id = this.auth.currentUser.get().getId();   
+                this.props.signIn(user_id); //calling action
             },(error) =>
             {    
                 alert("failed to signin");
